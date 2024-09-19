@@ -1,28 +1,30 @@
 import google.generativeai as genai
 import os
 from flask import Flask, render_template, request, jsonify
+from difflib import SequenceMatcher
 
 app = Flask(__name__)
 
 # Set your Google API key
-os.environ["GOOGLE_API_KEY"] = ""
+os.environ["GOOGLE_API_KEY"] = "AIzaSyCDKFxhW56bIfs7ORISzrkB5NGzv_oVl9c"
 genai.configure(api_key=os.environ["GOOGLE_API_KEY"])
 
 model = genai.GenerativeModel("models/gemini-1.5-pro")
 
-# A global variable to store conversation history
+# Global variables to store conversation history and context
 conversation_history = []
 
-
-# Voice assistance function
+# Voice assistance function with enhanced topic management
 def voice_assistance(user_input):
     global conversation_history
+
+    # Improved prompt with focus on concise and direct answers
     prompt = f"""
-    Please provide a professional and concise solution or response to the following user query:
+    You are an AI assistant in an engaging conversation with a user. The user just asked the following question:
     '{user_input}'
-    The answer should be brief, precise, and directly address the request.
-    Don't hesitate to provide concise, dont' apologize, you must provide the details user looking for.
+    Provide a direct and informative answer, focusing on the exact details the user is asking for. Avoid unnecessary elaboration or asking follow-up questions unless essential to the user’s inquiry. Keep the response clear, concise, and to the point. If the topic is complex, briefly summarize the key aspects.
     """
+
     response = model.generate_content(prompt).text
 
     # Update conversation history
